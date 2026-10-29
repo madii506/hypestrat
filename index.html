@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HYPESTRAT</title>
+<meta name="description" content="A HYPE treasury in every coin. Creator fees buy HYPE on Hyperliquid and stack it in the coin's own treasury.">
+<meta property="og:title" content="HYPESTRAT">
+<meta property="og:description" content="A HYPE treasury in every coin.">
+<meta property="og:image" content="https://hypestrat.vercel.app/assets/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://hypestrat.vercel.app/assets/og.png">
+<meta name="theme-color" content="#07130f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cpath d='M32 5 61 17H3z' fill='%236ef5cd'/%3E%3Crect x='5' y='19.5' width='54' height='3.6' rx='1' fill='%236ef5cd'/%3E%3Crect x='9.6' y='38.2' width='8' height='10' rx='1.5' fill='%2340c4a0'/%3E%3Crect x='21.8' y='33.6' width='8' height='14.6' rx='1.5' fill='%234fd3ae'/%3E%3Crect x='34.1' y='29.3' width='8' height='18.9' rx='1.5' fill='%235fe4be'/%3E%3Crect x='46.4' y='25' width='8' height='23.2' rx='1.5' fill='%236ef5cd'/%3E%3Crect x='7' y='50.5' width='50' height='3.4' rx='1' fill='%236ef5cd'/%3E%3Crect x='4' y='55' width='56' height='3.8' rx='1' fill='%236ef5cd'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..900&family=Geist+Mono:wght@400..600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#07130f;--bg2:#091915;--panel:#0b1e19;--line:rgba(110,245,205,.12);--line2:rgba(110,245,205,.26);--mint:#6ef5cd;--mint2:#40c4a0;--ink:#eef4f1;--sub:#96b6ad;--dim:#628a7f;--red:#ff6b7f;--mono:'Geist Mono',ui-monospace,SFMono-Regular,Menlo,monospace;--sans:Inter,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:hidden;scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+/* nav */
+.nav{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:58px;padding:0 20px;background:rgba(7,19,15,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.links{display:flex;gap:28px;font:500 12.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sub)}
+.links a{position:relative;padding:10px 0;transition:color .15s}
+.links a:hover,.links a.on{color:var(--ink)}
+.links a.on::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:2px;border-radius:2px;background:var(--mint)}
+/* hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(48% 85% at 77% 50%,rgba(40,124,103,.55),transparent 72%),radial-gradient(45% 80% at 18% 45%,rgba(18,56,47,.45),transparent 72%);pointer-events:none}
+.dots{position:absolute;inset:0;background-image:radial-gradient(rgba(110,245,205,.11) 1px,transparent 1.3px);background-size:28px 28px;-webkit-mask-image:radial-gradient(70% 80% at 62% 50%,#000,transparent);mask-image:radial-gradient(70% 80% at 62% 50%,#000,transparent);pointer-events:none}
+#spark{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-in{position:relative;display:grid;grid-template-columns:1.08fr 1fr;align-items:center;gap:24px;min-height:min(76vh,620px);padding:40px 0 28px}
+.wm{font:900 clamp(46px,9.2vw,122px)/.9 var(--sans);letter-spacing:-.04em;white-space:nowrap}
+.wm span{color:var(--mint)}
+.tag{margin-top:22px;font:500 clamp(18px,2.1vw,25px)/1.3 var(--sans);color:var(--sub)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid var(--line2);font:600 15px/1 var(--sans);color:var(--ink);transition:transform .15s,background .15s,border-color .15s,box-shadow .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);border-color:var(--mint)}
+.btn.pri{background:var(--mint);border-color:var(--mint);color:#03231b}
+.btn.pri:hover{background:#93fbdc;box-shadow:0 8px 28px rgba(110,245,205,.22)}
+.pair{display:flex;align-items:center;gap:12px;margin-top:26px;color:var(--sub);font:500 14px/1 var(--sans)}
+.chip{display:inline-flex;align-items:center;gap:9px;height:34px;padding:0 13px 0 11px;border:1px solid rgba(70,150,128,.85);border-radius:9px;background:#0c231e;color:#dde9e4}
+.chip i{width:11px;height:11px;border-radius:50%;background:var(--mint);box-shadow:inset 0 0 0 1.5px var(--mint2)}
+.stage{position:relative;width:100%;aspect-ratio:600/520}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+#drop{transform-box:fill-box;transform-origin:center}
+/* CA pill */
+.ca{display:inline-flex;align-items:center;gap:4px;margin-top:22px;padding:5px;border:1px solid var(--line2);border-radius:12px;background:rgba(9,28,23,.8);font:500 13px/1 var(--mono)}
+.ca code{padding:0 10px;color:var(--sub);font:inherit}
+.ca a,.ca button{padding:9px 12px;border-radius:8px;color:var(--ink);font:600 12px/1 var(--mono);letter-spacing:.04em;text-transform:uppercase;background:rgba(110,245,205,.08)}
+.ca a:hover,.ca button:hover{background:rgba(110,245,205,.18)}
+/* live strip */
+.strip{position:relative;display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line);background:rgba(7,19,15,.55)}
+.strip>div{padding:16px 18px;border-left:1px solid var(--line);min-width:0}
+.strip>div:first-child{border-left:0}
+.strip b{display:block;margin-bottom:8px;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.strip span{display:block;font:700 19px/1.15 var(--sans);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.strip .off{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:14px;color:var(--sub);font:500 13px/1 var(--mono)}
+.strip .off button{color:var(--mint);font:600 13px/1 var(--mono)}
+.sk{height:19px;width:70%;border-radius:5px;background:linear-gradient(90deg,rgba(110,245,205,.06),rgba(110,245,205,.16),rgba(110,245,205,.06));background-size:200% 100%;animation:sk 1.2s linear infinite}
+@keyframes sk{to{background-position:-200% 0}}
+.up{color:var(--mint)!important}.dn{color:var(--red)!important}
+/* sections */
+.sec{position:relative;padding:88px 0;border-bottom:1px solid var(--line)}
+.sec.alt{background:var(--bg2)}
+.eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:16px;font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mint)}
+.stat{font:500 11.5px/1 var(--mono);letter-spacing:.06em;color:var(--sub);text-transform:none}
+.stat.err{color:var(--red)}.stat.ok{color:var(--mint)}
+h2{font:800 clamp(26px,3.4vw,40px)/1.1 var(--sans);letter-spacing:-.025em;max-width:24ch}
+.lead{margin-top:14px;max-width:64ch;color:var(--sub);font-size:16px}
+.lead a{color:var(--mint)}
+/* 01 metrics */
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:44px;background:var(--line);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.m{padding:28px 26px 30px;background:var(--bg)}
+.m b{display:block;font:800 21px/1.2 var(--sans)}
+.m .f{display:inline-block;margin:12px 0 14px;padding:7px 10px;border-radius:8px;background:rgba(110,245,205,.07);color:var(--mint);font:500 13px/1 var(--mono)}
+.m p{color:var(--sub);font-size:14.5px}
+.m .v{margin-top:18px;font:800 34px/1 var(--sans);font-variant-numeric:tabular-nums;color:var(--mint)}
+.m .v:empty{display:none}
+.note{margin-top:22px;color:var(--sub);font:500 13px/1.6 var(--mono)}
+.note a{color:var(--mint)}
+/* 02 build */
+.build{display:grid;grid-template-columns:380px 1fr;gap:32px;margin-top:40px;align-items:start}
+.form{display:grid;gap:18px}
+.fl{display:grid;gap:8px;font:500 12px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--sub)}
+.in{height:48px;width:100%;padding:0 14px;border:1px solid var(--line2);border-radius:11px;background:#0a1d18;font:500 15px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--ink);outline:none;transition:border-color .15s}
+.in:focus{border-color:var(--mint)}
+.in::placeholder{color:#55776d}
+.file{position:relative;display:flex;align-items:center;height:48px;padding:0 14px;border:1px dashed var(--line2);border-radius:11px;background:#0a1d18;font:500 14px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--sub);cursor:pointer}
+.file input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.file:hover{border-color:var(--mint)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;padding:4px;border:1px solid var(--line2);border-radius:11px;background:#0a1d18}
+.seg button{height:40px;border-radius:8px;font:600 14px/1 var(--sans);letter-spacing:0;text-transform:none;color:var(--sub);transition:background .15s,color .15s}
+.seg button.on{background:var(--mint);color:#03231b}
+.cardw canvas{display:block;width:100%;height:auto;border:1px solid var(--line2);border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+.cact{display:flex;justify-content:center;gap:12px;margin-top:18px;flex-wrap:wrap}
+/* 03 check */
+.check{display:flex;gap:10px;margin-top:36px;max-width:720px}
+.check .in{flex:1;font-family:var(--mono);font-size:14px}
+.tries{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tries button{padding:8px 12px;border:1px solid var(--line2);border-radius:999px;font:500 12.5px/1 var(--mono);color:var(--sub);transition:color .15s,border-color .15s}
+.tries button:hover{color:var(--ink);border-color:var(--mint)}
+.res{margin-top:34px;animation:rise .45s ease both}
+.rhead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;margin-bottom:14px;font:500 13px/1.4 var(--mono);color:var(--sub)}
+.rhead a{color:var(--mint)}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.kpis+.kpis{margin-top:12px}
+.kpis.k3{grid-template-columns:repeat(3,1fr)}
+.kpis>div{padding:20px 20px 22px;background:var(--bg);min-width:0}
+.kpis b{display:block;margin-bottom:10px;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+.kpis span{display:block;font:800 26px/1.1 var(--sans);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpis i{display:block;margin-top:6px;font:500 12px/1 var(--mono);font-style:normal;color:var(--sub)}
+.empty{margin-top:14px;padding:18px 20px;border:1px dashed var(--line2);border-radius:12px;color:var(--sub);font:500 14px/1.5 var(--sans)}
+.accw{margin-top:12px;padding:18px 18px 10px;border:1px solid var(--line);border-radius:14px;background:var(--bg)}
+.accw b{display:block;font:500 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--dim)}
+#acc{display:block;width:100%;height:170px;margin-top:10px}
+.fills{list-style:none;margin-top:12px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fills li{display:grid;grid-template-columns:110px 1fr auto;gap:14px;align-items:center;padding:13px 18px;border-top:1px solid var(--line);font:500 13.5px/1.3 var(--mono);background:var(--bg)}
+.fills li:first-child{border-top:0}
+.fills .s{font-weight:600}
+.fills a{color:var(--sub)}
+.fills a:hover{color:var(--mint)}
+/* 04 how */
+.flow{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:48px}
+.flow::before{content:'';position:absolute;left:10%;right:10%;top:23px;height:2px;background:repeating-linear-gradient(90deg,var(--mint) 0 6px,transparent 6px 16px);opacity:.55;animation:march 1s linear infinite}
+@keyframes march{to{background-position:16px 0}}
+.node{position:relative;text-align:center}
+.node em{display:grid;place-items:center;width:48px;height:48px;margin:0 auto 18px;border-radius:50%;border:1px solid var(--mint);background:var(--bg2);color:var(--mint);font:600 16px/1 var(--mono);font-style:normal;box-shadow:0 0 0 6px var(--bg2)}
+.node b{display:block;font:700 16.5px/1.25 var(--sans)}
+.node p{margin-top:8px;color:var(--sub);font-size:14px}
+/* 05 chart */
+.chead{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:16px}
+.tabs{display:flex;padding:4px;border:1px solid var(--line2);border-radius:11px}
+.tabs button{height:34px;padding:0 14px;border-radius:8px;color:var(--sub);font:600 13px/1 var(--mono)}
+.tabs button.on{background:var(--mint);color:#03231b}
+.chartw{position:relative;margin-top:30px;border:1px solid var(--line);border-radius:16px;background:var(--bg);overflow:hidden}
+#cv{display:block;width:100%;height:380px}
+.clabel{position:absolute;left:18px;top:14px;font:500 12px/1.5 var(--mono);color:var(--sub)}
+.clabel b{display:block;font:800 28px/1.1 var(--sans);color:var(--ink);font-variant-numeric:tabular-nums}
+/* 06 faq */
+.faq{margin-top:36px;max-width:820px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{display:flex;justify-content:space-between;gap:20px;padding:22px 0;cursor:pointer;list-style:none;font:700 17px/1.35 var(--sans)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--mint);font:500 22px/1 var(--mono);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{padding:0 0 22px;max-width:68ch;color:var(--sub);font-size:15px}
+/* end */
+.end{position:relative;padding:110px 0 120px;text-align:center;overflow:hidden}
+.end::before{content:'';position:absolute;inset:0;background:radial-gradient(50% 70% at 50% 60%,rgba(40,124,103,.4),transparent 72%);pointer-events:none}
+.end .wm{font-size:clamp(42px,8vw,96px)}
+.end .cta{justify-content:center}
+.end .wrap{position:relative}
+/* reveal */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.rv.vis{opacity:1;transform:none}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:980px){
+  .hero-in{grid-template-columns:1fr;text-align:center;min-height:0;padding:44px 0 10px}
+  .cta,.pair{justify-content:center}
+  .stage{max-width:520px;margin:0 auto}
+  .strip{grid-template-columns:repeat(3,1fr)}
+  .strip>div:nth-child(4){border-left:0}
+  .strip>div:nth-child(n+4){border-top:1px solid var(--line)}
+  .metrics{grid-template-columns:1fr}
+  .build{grid-template-columns:1fr}
+  .flow{grid-template-columns:1fr;gap:26px;max-width:420px}
+  .flow::before{left:23px;right:auto;top:24px;bottom:24px;width:2px;height:auto;background:repeating-linear-gradient(180deg,var(--mint) 0 6px,transparent 6px 16px);animation:marchv 1s linear infinite}
+  @keyframes marchv{to{background-position:0 16px}}
+  .node{display:grid;grid-template-columns:48px 1fr;column-gap:18px;text-align:left}
+  .node em{grid-row:span 2;margin:0}
+  .node p{margin-top:4px}
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  .kpis.k3{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .wrap{padding-left:16px;padding-right:16px}
+  .nav{display:flex;justify-content:center;padding:0 8px}
+  .links{gap:16px;font-size:11px;overflow-x:auto;scrollbar-width:none;padding:0 6px}
+  .links::-webkit-scrollbar{display:none}
+  .sec{padding:64px 0}
+  .strip{grid-template-columns:repeat(2,1fr)}
+  .strip>div:nth-child(n){border-left:1px solid var(--line);border-top:1px solid var(--line)}
+  .strip>div:nth-child(odd){border-left:0}
+  .strip>div:nth-child(-n+2){border-top:0}
+  .strip span{font-size:17px}
+  .check{flex-direction:column}
+  .check .btn{width:100%}
+  .fills li{grid-template-columns:1fr auto;font-size:12.5px}
+  .fills li .t{grid-column:1/-1;color:var(--dim)}
+  .kpis span{font-size:21px}
+  #cv{height:300px}
+  .pair{flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.flow::before,.sk{animation:none}}
+</style>
+</head>
+<body>
+<span class="sr" aria-live="polite" id="live"></span>
+<nav class="nav"><span></span><div class="links"><a href="#strategy">Strategy</a><a href="#build">Build</a><a href="#check">Treasury</a><a href="#how">How</a><a href="#chart">Chart</a><a href="#faq">FAQ</a></div><span></span></nav>
+
+<header class="hero" id="top">
+  <div class="dots"></div><canvas id="spark"></canvas>
+  <div class="wrap hero-in">
+    <div>
+      <h1 class="wm"><span>HYPE</span>STRAT</h1>
+      <p class="tag">A HYPE treasury in every coin.</p>
+      <div class="cta"><a class="btn pri" href="#build">Build a strategy</a><a class="btn" href="#check">Check a treasury</a></div>
+      <div class="pair"><span class="chip"><i></i>pump.fun</span>×<span class="chip"><i></i>Hyperliquid</span></div>
+      <div class="ca-slot"></div>
+    </div>
+    <div class="stage"><svg id="stacks" viewBox="0 0 600 520" aria-hidden="true"></svg></div>
+  </div>
+  <div class="strip num" id="strip">
+    <div><b>HYPE</b><span id="s1"><i class="sk"></i></span></div>
+    <div><b>24h</b><span id="s2"><i class="sk"></i></span></div>
+    <div><b>HYPE market cap</b><span id="s3"><i class="sk"></i></span></div>
+    <div><b>Spot volume 24h</b><span id="s4"><i class="sk"></i></span></div>
+    <div id="s5w"><b>Staking yield</b><span id="s5"><i class="sk"></i></span></div>
+    <div id="s6w"><b>1 SOL of fees buys</b><span id="s6"><i class="sk"></i></span></div>
+  </div>
+</header>
+
+<main>
+<section class="sec" id="strategy"><div class="wrap">
+  <div class="eyebrow rv">01 — The strategy</div>
+  <h2 class="rv">Companies stack BTC. Coins should stack HYPE.</h2>
+  <p class="lead rv">Treasury companies turned a balance sheet into a trade. HYPESTRAT does it for memecoins: a coin's creator fees buy HYPE, the HYPE gets staked, and the treasury sits at a public Hyperliquid address anyone can check.</p>
+  <div class="metrics rv">
+    <div class="m"><b>HYPE holdings</b><div class="f">spot + staked</div><p>Every HYPE the treasury holds, read live from Hyperliquid.</p><div class="v num" id="m1"></div></div>
+    <div class="m"><b>HYPE per 1M</b><div class="f">holdings ÷ 1,000</div><p>The HYPE behind every million tokens. pump.fun coins have a fixed 1B supply.</p><div class="v num" id="m2"></div></div>
+    <div class="m"><b>mNAV</b><div class="f">market cap ÷ treasury value</div><p>Below 1, the coin trades for less than the HYPE it holds.</p><div class="v num" id="m3"></div></div>
+  </div>
+  <p class="note rv" id="tnote">The $HYPESTRAT treasury address is posted at launch. From then on its holdings, HYPE per 1M and mNAV show here, live.</p>
+</div></section>
+
+<section class="sec alt" id="build"><div class="wrap">
+  <div class="eyebrow rv">02 — Build a strategy</div>
+  <h2 class="rv">Your coin, with a HYPE treasury.</h2>
+  <div class="build rv">
+    <form class="form" id="bform" autocomplete="off" onsubmit="return false">
+      <label class="fl">Coin name<input class="in" id="bname" maxlength="24" placeholder="Name your coin"></label>
+      <label class="fl">Ticker<input class="in" id="btick" maxlength="10" placeholder="TICKER"></label>
+      <div class="fl">Image<label class="file"><input type="file" id="bimg" accept="image/*"><span id="bimgl">Add an image</span></label></div>
+      <div class="fl">Creator fees to HYPE<div class="seg" id="bshare"><button type="button" data-v="50">50%</button><button type="button" data-v="75">75%</button><button type="button" data-v="100" class="on">100%</button></div></div>
+      <div class="fl">Treasury HYPE<div class="seg" id="bstake"><button type="button" data-v="1" class="on">Staked</button><button type="button" data-v="0">Held</button></div></div>
+      <label class="fl">Fees per day (SOL)<input class="in" id="bfees" inputmode="decimal" placeholder="Optional"></label>
+    </form>
+    <div class="cardw">
+      <canvas id="card" width="1200" height="675"></canvas>
+      <div class="cact"><button class="btn pri" type="button" id="bsave">Save card</button><a class="btn" id="bx" target="_blank" rel="noopener">Share on X</a></div>
+    </div>
+  </div>
+</div></section>
+
+<section class="sec" id="check"><div class="wrap">
+  <div class="eyebrow rv">03 — Check a treasury <span class="stat" id="cstat"></span></div>
+  <h2 class="rv">Any HYPE treasury, read live.</h2>
+  <form class="check rv" id="cform"><input class="in" id="caddr" placeholder="Hyperliquid address, 0x…" spellcheck="false" autocomplete="off"><button class="btn pri" type="submit">Check</button></form>
+  <div class="tries rv" id="tries"><button type="button" data-a="0xfefefefefefefefefefefefefefefefefefefefe">Assistance Fund</button></div>
+  <div class="res" id="cres" hidden>
+    <div class="rhead"><span id="raddr"></span><a id="rlink" target="_blank" rel="noopener">Open on Hypurrscan ↗</a></div>
+    <div class="kpis num">
+      <div><b>Total HYPE</b><span id="r1"></span></div>
+      <div><b>Value</b><span id="r2"></span></div>
+      <div><b>Staked</b><span id="r3"></span></div>
+      <div><b>Spot</b><span id="r4"></span></div>
+    </div>
+    <div class="kpis k3 num" id="rtr">
+      <div><b>HYPE bought</b><span id="r5"></span><i id="r5i"></i></div>
+      <div><b>Avg buy price</b><span id="r6"></span></div>
+      <div><b>HYPE sold</b><span id="r7"></span><i id="r7i"></i></div>
+    </div>
+    <div class="empty" id="rempty" hidden></div>
+    <div class="accw" id="accw"><b>HYPE bought over time · recent fills</b><canvas id="acc"></canvas></div>
+    <ol class="fills" id="rfills"></ol>
+  </div>
+</div></section>
+
+<section class="sec alt" id="how"><div class="wrap">
+  <div class="eyebrow rv">04 — How it works</div>
+  <h2 class="rv">Fees in. HYPE stacked.</h2>
+  <div class="flow rv">
+    <div class="node"><em>1</em><b>Launch on pump.fun</b><p>The coin trades like any other pump.fun coin.</p></div>
+    <div class="node"><em>2</em><b>Fees are claimed</b><p>Its creator fees come in as SOL.</p></div>
+    <div class="node"><em>3</em><b>Moved to Hyperliquid</b><p>The SOL lands on the treasury's Hyperliquid address.</p></div>
+    <div class="node"><em>4</em><b>Swapped into HYPE</b><p>Bought on the HYPE spot market.</p></div>
+    <div class="node"><em>5</em><b>Staked</b><p>Delegated to a validator, so the stack keeps earning.</p></div>
+  </div>
+  <p class="lead rv">Every step lands on a public address. Paste it into <a href="#check">Check a treasury</a> and watch it grow.</p>
+</div></section>
+
+<section class="sec" id="chart"><div class="wrap">
+  <div class="eyebrow rv">05 — HYPE, live</div>
+  <div class="chead rv"><h2>What every treasury holds.</h2><div class="tabs" id="ctabs"><button type="button" data-i="15m">15m</button><button type="button" data-i="1h" class="on">1h</button><button type="button" data-i="4h">4h</button><button type="button" data-i="1d">1d</button></div></div>
+  <div class="chartw rv"><canvas id="cv"></canvas><div class="clabel" id="clabel"></div></div>
+</div></section>
+
+<section class="sec alt" id="faq"><div class="wrap">
+  <div class="eyebrow rv">06 — FAQ</div>
+  <h2 class="rv">Questions.</h2>
+  <div class="faq rv">
+    <details><summary>What is HYPESTRAT?</summary><p>A HYPE treasury in every coin. A coin's creator fees buy HYPE on Hyperliquid and stack it in that coin's own treasury, at a public address.</p></details>
+    <details><summary>Where do the creator fees go?</summary><p>Into HYPE. Fees are claimed in SOL, moved to Hyperliquid, swapped into HYPE on the spot market and staked with a validator.</p></details>
+    <details><summary>How do I know a treasury is real?</summary><p>Paste its address into Check a treasury. Spot HYPE, staked HYPE and every HYPE trade are read live from Hyperliquid. You can also open the address on Hypurrscan.</p></details>
+    <details><summary>What do HYPE per 1M and mNAV mean?</summary><p>HYPE per 1M is how much HYPE backs every million tokens (pump.fun coins have a 1B supply). mNAV is market cap divided by the treasury's value. Below 1, the coin trades for less than its HYPE.</p></details>
+    <details><summary>When can I launch my own?</summary><p>Launches open after $HYPESTRAT goes live. Build your strategy card now and post it.</p></details>
+    <details><summary>Is HYPESTRAT part of pump.fun or Hyperliquid?</summary><p>No. It's independent and built on both.</p></details>
+    <details><summary>Is any of this a promise of returns?</summary><p>No. A treasury moves with the price of HYPE, and it can go down. Nothing here is financial advice.</p></details>
+  </div>
+</div></section>
+</main>
+
+<section class="end"><div class="wrap">
+  <h2 class="wm rv"><span>HYPE</span>STRAT</h2>
+  <p class="tag rv">A HYPE treasury in every coin.</p>
+  <div class="cta rv"><a class="btn pri" href="#build">Build a strategy</a><a class="btn" href="#check">Check a treasury</a></div>
+  <div class="ca-slot"></div>
+</div></section>
+
+<script src="assets/config.js"></script>
+<script>
+(() => {
+const CFG = window.HYPESTRAT || {};
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const live = { hype: null, sol: null, apr: null, coin: null };
+let own = null;
+const say = (t) => { $('#live').textContent = t; };
+const short = (a) => a.slice(0, 6) + '…' + a.slice(-4);
+function usd(n, dp) {
+  if (!isFinite(n)) return '';
+  const a = Math.abs(n);
+  if (a >= 1e9) return '$' + (n / 1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return '$' + (n / 1e6).toFixed(2) + 'M';
+  if (a >= 1e5) return '$' + (n / 1e3).toFixed(1) + 'K';
+  return '$' + n.toLocaleString('en-US', { minimumFractionDigits: dp ?? 2, maximumFractionDigits: dp ?? 2 });
+}
+function num(n, dp = 2) {
+  if (!isFinite(n)) return '';
+  const a = Math.abs(n);
+  if (a >= 1e9) return (n / 1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return (n / 1e6).toFixed(2) + 'M';
+  if (a >= 1e5) return (n / 1e3).toFixed(1) + 'K';
+  return n.toLocaleString('en-US', { maximumFractionDigits: dp });
+}
+const pct = (n) => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+function ago(t) {
+  const s = Math.max(1, (Date.now() - t) / 1000);
+  if (s < 60) return Math.round(s) + 's ago';
+  if (s < 3600) return Math.round(s / 60) + 'm ago';
+  if (s < 86400) return Math.round(s / 3600) + 'h ago';
+  return Math.round(s / 86400) + 'd ago';
+}
+
+/* ---------- CA pill (only when set) ---------- */
+if (CFG.ca) {
+  $$('.ca-slot').forEach((el) => {
+    el.innerHTML = `<div class="ca"><code>${short(CFG.ca)}</code><button type="button" data-copy>Copy</button><a href="https://pump.fun/coin/${CFG.ca}" target="_blank" rel="noopener">Buy</a><a href="https://dexscreener.com/solana/${CFG.ca}" target="_blank" rel="noopener">Chart</a>${CFG.x ? `<a href="${CFG.x}" target="_blank" rel="noopener">X</a>` : ''}</div>`;
+  });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-copy]'); if (!b) return;
+    navigator.clipboard.writeText(CFG.ca).then(() => { b.textContent = 'Copied'; say('Contract address copied'); setTimeout(() => (b.textContent = 'Copy'), 1400); });
+  });
+}
+
+/* ---------- coins (SVG for the hero, canvas for the card) ---------- */
+const tone = (rgb, k) => `rgb(${rgb.map((v) => Math.min(255, Math.round(v * k))).join(',')})`;
+function coinSVG(cx, cy, rx, ry, th, k = 1) {
+  const w = rx * 0.045, a = (d) => d * Math.PI / 180;
+  const p = (d, s) => [cx + rx * s * Math.cos(a(d)), cy + ry * s * Math.sin(a(d))];
+  const [x1, y1] = p(195, .62), [x2, y2] = p(250, .62);
+  return `<g><path d="M${cx - rx},${cy}V${cy + th}A${rx},${ry} 0 0 0 ${cx + rx},${cy + th}V${cy}Z" fill="${tone([54, 182, 148], k)}" stroke="#0a2e27" stroke-width="${w}"/>` +
+    `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="${tone([122, 242, 208], k)}" stroke="#0a2e27" stroke-width="${w}"/>` +
+    `<ellipse cx="${cx}" cy="${cy}" rx="${rx * .78}" ry="${ry * .78}" fill="none" stroke="${tone([88, 214, 178], k)}" stroke-width="${w * 1.6}"/>` +
+    `<path d="M${x1},${y1}A${rx * .62},${ry * .62} 0 0 1 ${x2},${y2}" fill="none" stroke="rgba(255,255,255,.8)" stroke-width="${w * 1.4}" stroke-linecap="round"/></g>`;
+}
+function coinC(c, cx, cy, rx, ry, th, k = 1) {
+  const w = Math.max(1.5, rx * 0.045);
+  c.lineWidth = w; c.strokeStyle = '#0a2e27'; c.lineJoin = 'round';
+  c.beginPath(); c.moveTo(cx - rx, cy); c.lineTo(cx - rx, cy + th); c.ellipse(cx, cy + th, rx, ry, 0, Math.PI, 0, true); c.lineTo(cx + rx, cy); c.closePath();
+  c.fillStyle = tone([54, 182, 148], k); c.fill(); c.stroke();
+  c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); c.fillStyle = tone([122, 242, 208], k); c.fill(); c.stroke();
+  c.beginPath(); c.ellipse(cx, cy, rx * .78, ry * .78, 0, 0, Math.PI * 2); c.lineWidth = w * 1.6; c.strokeStyle = tone([88, 214, 178], k); c.stroke();
+  c.beginPath(); c.ellipse(cx, cy, rx * .62, ry * .62, 0, 195 * Math.PI / 180, 250 * Math.PI / 180); c.lineWidth = w * 1.4; c.lineCap = 'round'; c.strokeStyle = 'rgba(255,255,255,.8)'; c.stroke(); c.lineCap = 'butt';
+}
+
+/* ---------- hero: three stacks, a coin drops in every few seconds ---------- */
+(function hero() {
+  const svg = $('#stacks');
+  const rx = 82, ry = 30, th = 20, gy = 468, xs = [118, 300, 482], ns = [4, 7, 10];
+  let h = '<defs><filter id="bl" x="-60%" y="-200%" width="220%" height="500%"><feGaussianBlur stdDeviation="12"/></filter></defs>';
+  xs.forEach((x) => (h += `<ellipse cx="${x}" cy="${gy + 6}" rx="${rx * 1.28}" ry="${ry * .85}" fill="rgba(0,0,0,.6)" filter="url(#bl)"/>`));
+  xs.forEach((x, s) => { h += `<g id="st${s}">`; for (let k = 0; k < ns[s]; k++) h += coinSVG(x, gy - k * th - th, rx, ry, th, .9 + .1 * k / Math.max(1, ns[s] - 1)); h += '</g>'; });
+  h += `<g id="drop" style="opacity:0">${coinSVG(xs[2], 0, rx, ry, th, 1)}</g>`;
+  svg.innerHTML = h;
+  if (RM || !svg.animate) return;
+  const drop = $('#drop'), top = $('#st2');
+  let n = ns[2], busy = false;
+  async function cycle() {
+    if (busy || document.hidden) return; busy = true;
+    try {
+      if (n >= 13) {
+        const extra = [...top.children].slice(ns[2]);
+        await Promise.all(extra.map((g) => g.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 450, fill: 'forwards' }).finished));
+        extra.forEach((g) => g.remove()); n = ns[2];
+      }
+      const y = gy - n * th - th;
+      await drop.animate([
+        { transform: `translate(-40px,${y - 330}px) rotate(-26deg)`, opacity: 0 },
+        { transform: `translate(-26px,${y - 240}px) rotate(-18deg)`, opacity: 1, offset: .25 },
+        { transform: `translate(0px,${y}px) rotate(0deg)`, opacity: 1 },
+      ], { duration: 820, easing: 'cubic-bezier(.55,0,.85,.35)', fill: 'forwards' }).finished;
+      top.insertAdjacentHTML('beforeend', coinSVG(xs[2], y, rx, ry, th, 1));
+      drop.animate([{ opacity: 0 }, { opacity: 0 }], { duration: 1, fill: 'forwards' });
+      const g = top.lastElementChild; g.style.transformBox = 'fill-box'; g.style.transformOrigin = 'center bottom';
+      g.animate([{ transform: 'scaleY(.86)' }, { transform: 'scaleY(1.04)' }, { transform: 'none' }], { duration: 260, easing: 'ease-out' });
+      n++;
+    } finally { busy = false; }
+  }
+  setTimeout(cycle, 700); setInterval(cycle, 2600);
+})();
+
+/* ---------- hero sparks: mint specks rising (alive, paused when hidden) ---------- */
+(function sparks() {
+  const cv = $('#spark'); if (RM) return;
+  const c = cv.getContext('2d'); let W = 0, H = 0, P = [], last = 0;
+  const size = () => { const r = cv.getBoundingClientRect(), d = Math.min(1.5, devicePixelRatio || 1); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; c.setTransform(d, 0, 0, d, 0, 0); };
+  const make = (y) => ({ x: W * (.35 + Math.random() * .65), y: y ?? H + Math.random() * 40, v: 10 + Math.random() * 26, r: .6 + Math.random() * 1.6, a: .15 + Math.random() * .5, w: Math.random() * 6.28 });
+  size(); for (let i = 0; i < 46; i++) P.push(make(Math.random() * H));
+  addEventListener('resize', size);
+  (function tick(t) {
+    requestAnimationFrame(tick);
+    if (document.hidden || t - last < 40) return;
+    const dt = Math.min(.1, (t - last) / 1000); last = t;
+    c.clearRect(0, 0, W, H);
+    for (const p of P) {
+      p.y -= p.v * dt; p.w += dt; const x = p.x + Math.sin(p.w) * 6;
+      if (p.y < -10) Object.assign(p, make());
+      c.globalAlpha = p.a * Math.min(1, p.y / (H * .3)); c.fillStyle = '#6ef5cd';
+      c.beginPath(); c.arc(x, p.y, p.r, 0, 6.283); c.fill();
+    }
+    c.globalAlpha = 1;
+  })(0);
+})();
+
+/* ---------- live HYPE data ---------- */
+function setS(id, v, cls) { const el = $('#' + id); el.textContent = v; el.className = cls || ''; }
+function paintStrip() {
+  const h = live.hype;
+  if (!$('#s1')) { $('#strip').innerHTML = stripHTML; }
+  setS('s1', usd(h.px, h.px < 100 ? 3 : 2));
+  setS('s2', pct(h.chg), h.chg >= 0 ? 'up' : 'dn');
+  setS('s3', h.mcap ? usd(h.mcap) : usd(h.px * 0));
+  setS('s4', usd(h.vol));
+  if (live.apr) setS('s5', live.apr.toFixed(2) + '% APR'); else $('#s5w').remove();
+  if (live.sol && live.sol.px) setS('s6', num(live.sol.px / h.px, 3) + ' HYPE'); else $('#s6w').remove();
+}
+const stripHTML = $('#strip').innerHTML;
+function stripOffline() {
+  if (live.hype) return;
+  $('#strip').innerHTML = '<div class="off"><span>● Hyperliquid is not answering right now</span><button type="button" id="retry">Retry ↻</button></div>';
+  $('#retry').onclick = () => { $('#strip').innerHTML = stripHTML; loadHype(); };
+}
+async function loadHype() {
+  try {
+    const r = await fetch('/api/hype' + (CFG.ca ? '?ca=' + encodeURIComponent(CFG.ca) : ''), { cache: 'no-store' });
+    const j = await r.json();
+    if (!r.ok || !j.hype || !j.hype.px) throw 0;
+    Object.assign(live, { hype: j.hype, sol: j.sol, apr: j.apr, coin: j.coin });
+    paintStrip(); drawCard(); paintOwn();
+  } catch (e) { stripOffline(); }
+}
+loadHype();
+setInterval(() => { if (!document.hidden) loadHype(); }, 15000);
+
+/* ---------- $HYPESTRAT's own treasury (when set) ---------- */
+async function getTreasury(addr) {
+  const r = await fetch('/api/treasury?addr=' + addr.toLowerCase(), { cache: 'no-store' });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.error || 'Hyperliquid is not answering right now.');
+  return j;
+}
+function paintOwn() {
+  if (!own) return;
+  const t = own.hype.total;
+  $('#m1').textContent = num(t, 2) + ' HYPE';
+  $('#m2').textContent = num(t / 1000, 4) + ' HYPE';
+  const nav = t * (live.hype ? live.hype.px : own.px);
+  $('#m3').textContent = live.coin && live.coin.mcap && nav ? (live.coin.mcap / nav).toFixed(2) + '×' : '';
+  $('#tnote').innerHTML = `$HYPESTRAT treasury <a href="https://hypurrscan.io/address/${CFG.treasury}" target="_blank" rel="noopener">${short(CFG.treasury)} ↗</a> · read live from Hyperliquid`;
+}
+async function loadOwn() { try { own = await getTreasury(CFG.treasury); paintOwn(); } catch (e) {} }
+if (/^0x[0-9a-fA-F]{40}$/.test(CFG.treasury || '')) {
+  loadOwn(); setInterval(() => { if (!document.hidden) loadOwn(); }, 30000);
+  $('#tries').insertAdjacentHTML('afterbegin', `<button type="button" data-a="${CFG.treasury}">$HYPESTRAT treasury</button>`);
+}
+
+/* ---------- 02: strategy card ---------- */
+const B = { name: '', tick: '', share: 100, staked: true, fees: 0, img: null };
+function seg(id, key, cast) {
+  $('#' + id).addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    $$('#' + id + ' button').forEach((x) => x.classList.toggle('on', x === b));
+    B[key] = cast(b.dataset.v); drawCard();
+  });
+}
+seg('bshare', 'share', Number); seg('bstake', 'staked', (v) => v === '1');
+$('#bname').addEventListener('input', (e) => { B.name = e.target.value.trim(); drawCard(); });
+$('#btick').addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase(); B.tick = e.target.value; drawCard(); });
+$('#bfees').addEventListener('input', (e) => { const v = parseFloat(e.target.value.replace(',', '.')); B.fees = isFinite(v) && v > 0 ? v : 0; drawCard(); });
+$('#bimg').addEventListener('change', (e) => {
+  const f = e.target.files && e.target.files[0]; if (!f) return;
+  const im = new Image(); im.onload = () => { B.img = im; $('#bimgl').textContent = f.name; drawCard(); }; im.src = URL.createObjectURL(f);
+});
+function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function fit(c, text, weight, max, size, fam = 'Inter') { let s = size; do { c.font = `${weight} ${s}px ${fam}`; s -= 2; } while (c.measureText(text).width > max && s > 18); return c.font; }
+function perSol() { return live.hype && live.sol && live.sol.px ? live.sol.px / live.hype.px : 0; }
+function drawCard() {
+  const cv = $('#card'), c = cv.getContext('2d'), W = 1200, H = 675;
+  c.fillStyle = '#07130f'; c.fillRect(0, 0, W, H);
+  let g = c.createRadialGradient(W * .8, H * .58, 10, W * .8, H * .58, W * .48); g.addColorStop(0, 'rgba(44,132,110,.62)'); g.addColorStop(1, 'rgba(44,132,110,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  c.fillStyle = 'rgba(110,245,205,.07)'; for (let x = 15; x < W; x += 30) for (let y = 15; y < H; y += 30) c.fillRect(x, y, 1.6, 1.6);
+  // stacks
+  const rx = 62, ry = 23, th = 15, gy = H - 64, xs = [868, 994, 1120], ns = [4, 7, 10];
+  c.save(); c.fillStyle = 'rgba(0,0,0,.45)'; c.filter = 'blur(12px)'; xs.forEach((x) => { c.beginPath(); c.ellipse(x, gy + 4, rx * 1.25, ry * .8, 0, 0, 6.283); c.fill(); }); c.restore();
+  xs.forEach((x, s) => { for (let k = 0; k < ns[s]; k++) coinC(c, x, gy - k * th - th, rx, ry, th, .9 + .1 * k / (ns[s] - 1)); });
+  c.save(); c.translate(1112, 168); c.rotate(-.42); coinC(c, 0, 0, rx, ry, th, 1); c.restore();
+  // identity
+  const name = B.name || 'Your coin', tick = '$' + (B.tick || 'TICKER');
+  c.save(); c.beginPath(); c.arc(112, 116, 48, 0, 6.283); c.closePath();
+  if (B.img) { c.clip(); const s = Math.max(96 / B.img.width, 96 / B.img.height); c.drawImage(B.img, 112 - B.img.width * s / 2, 116 - B.img.height * s / 2, B.img.width * s, B.img.height * s); }
+  else { c.fillStyle = '#6ef5cd'; c.fill(); c.fillStyle = '#05261d'; c.font = '900 44px Inter'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(name[0].toUpperCase(), 112, 119); }
+  c.restore(); c.lineWidth = 3; c.strokeStyle = 'rgba(110,245,205,.55)'; c.beginPath(); c.arc(112, 116, 49.5, 0, 6.283); c.stroke();
+  c.textAlign = 'left'; c.textBaseline = 'alphabetic';
+  c.fillStyle = '#eef4f1'; c.font = fit(c, name, 900, 560, 56); c.fillText(name, 186, 118);
+  c.fillStyle = '#6ef5cd'; c.font = '600 24px "Geist Mono", monospace'; c.fillText(tick, 188, 156);
+  // tiles
+  const ps = perSol(), k = B.share / 100;
+  const tiles = [
+    ['Creator fees to HYPE', B.share + '%'],
+    ['Treasury', B.staked ? 'Staked' : 'Held'],
+    ['1 SOL of fees buys', ps ? num(ps * k, 3) + ' HYPE' : '…'],
+    B.fees ? ['Stacks a month', ps ? num(B.fees * 30 * ps * k, 1) + ' HYPE' : '…'] : ['HYPE price', live.hype ? usd(live.hype.px, live.hype.px < 100 ? 3 : 2) : '…'],
+  ];
+  tiles.forEach(([l, v], i) => {
+    const x = 64 + (i % 2) * 330, y = 222 + Math.floor(i / 2) * 150;
+    rr(c, x, y, 310, 128, 16); c.fillStyle = 'rgba(9,30,25,.82)'; c.fill(); c.lineWidth = 1.5; c.strokeStyle = 'rgba(110,245,205,.22)'; c.stroke();
+    c.fillStyle = '#7fa59a'; c.font = '500 16px "Geist Mono", monospace'; c.fillText(l.toUpperCase(), x + 22, y + 40);
+    c.fillStyle = i === 0 ? '#6ef5cd' : '#eef4f1'; c.font = fit(c, v, 800, 266, 42); c.fillText(v, x + 22, y + 96);
+  });
+  c.fillStyle = '#6ef5cd'; c.beginPath(); c.arc(70, H - 58, 6, 0, 6.283); c.fill();
+  c.fillStyle = '#96b6ad'; c.font = '500 18px "Geist Mono", monospace'; c.fillText('HYPESTRAT · a HYPE treasury in every coin', 88, H - 52);
+  // share link
+  const line = `${tick} runs a HYPE strategy: ${B.share}% of its creator fees buy HYPE${B.staked ? ' and stake it' : ''}.` + (ps ? ` 1 SOL of fees stacks ${num(ps * k, 3)} HYPE today.` : '') + `\n\nA HYPE treasury in every coin.`;
+  $('#bx').href = 'https://x.com/intent/tweet?text=' + encodeURIComponent(line) + '&url=' + encodeURIComponent(location.origin);
+}
+$('#bsave').addEventListener('click', () => {
+  $('#card').toBlob((b) => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = (B.tick || 'hypestrat').toLowerCase() + '-strategy.png'; document.body.appendChild(a); a.click(); a.remove(); say('Card saved'); });
+});
+drawCard();
+if (document.fonts) Promise.all([document.fonts.load('900 56px Inter'), document.fonts.load('800 42px Inter'), document.fonts.load('600 24px "Geist Mono"'), document.fonts.load('500 16px "Geist Mono"')]).then(drawCard, drawCard);
+
+/* ---------- 03: treasury checker ---------- */
+function cstat(t, cls) { const s = $('#cstat'); s.textContent = t; s.className = 'stat ' + (cls || ''); say(t); }
+function drawAcc(fills) {
+  const cv = $('#acc'), d = Math.min(2, devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w * d; cv.height = h * d; const c = cv.getContext('2d'); c.scale(d, d);
+  const b = fills.filter((f) => f.side === 'B').sort((x, y) => x.t - y.t);
+  if (b.length < 1) return;
+  let s = 0; const pts = b.map((f) => [f.t, (s += f.sz)]);
+  if (pts.length === 1) pts.unshift([pts[0][0] - 3600e3, 0]);
+  const t0 = pts[0][0], t1 = pts[pts.length - 1][0] || t0 + 1, mx = s || 1;
+  const X = (t) => 6 + (t - t0) / Math.max(1, t1 - t0) * (w - 12), Y = (v) => h - 22 - v / mx * (h - 40);
+  c.strokeStyle = 'rgba(110,245,205,.08)'; c.lineWidth = 1;
+  for (let i = 0; i <= 3; i++) { const y = 18 + i * (h - 40) / 3; c.beginPath(); c.moveTo(0, y); c.lineTo(w, y); c.stroke(); }
+  const gr = c.createLinearGradient(0, 18, 0, h - 22); gr.addColorStop(0, 'rgba(110,245,205,.32)'); gr.addColorStop(1, 'rgba(110,245,205,0)');
+  c.beginPath(); c.moveTo(X(pts[0][0]), Y(0)); pts.forEach(([t, v], i) => { if (i) c.lineTo(X(t), Y(pts[i - 1][1])); c.lineTo(X(t), Y(v)); }); c.lineTo(X(t1), Y(0)); c.closePath(); c.fillStyle = gr; c.fill();
+  c.beginPath(); pts.forEach(([t, v], i) => { if (!i) c.moveTo(X(t), Y(v)); else { c.lineTo(X(t), Y(pts[i - 1][1])); c.lineTo(X(t), Y(v)); } }); c.strokeStyle = '#6ef5cd'; c.lineWidth = 2; c.stroke();
+  c.fillStyle = '#628a7f'; c.font = '500 11px "Geist Mono", monospace';
+  c.textAlign = 'left'; c.fillText(new Date(t0).toLocaleDateString([], { month: 'short', day: 'numeric' }), 6, h - 5);
+  c.textAlign = 'right'; c.fillText(new Date(t1).toLocaleDateString([], { month: 'short', day: 'numeric' }), w - 6, h - 5);
+  c.fillText(num(mx, 1) + ' HYPE', w - 6, 13);
+}
+let lastRes = null;
+function paintRes(j) {
+  lastRes = j;
+  $('#cres').hidden = false;
+  $('#raddr').textContent = j.addr;
+  $('#rlink').href = 'https://hypurrscan.io/address/' + j.addr;
+  $('#r1').textContent = num(j.hype.total, 2);
+  $('#r2').textContent = usd(j.hype.usd);
+  $('#r3').textContent = num(j.hype.staked, 2);
+  $('#r4').textContent = num(j.hype.spot, 2);
+  const hasT = j.buys.n + j.sells.n > 0;
+  $('#rtr').hidden = !hasT; $('#accw').hidden = !j.buys.n; $('#rfills').hidden = !hasT;
+  const em = $('#rempty');
+  if (!j.hype.total && !hasT) { em.hidden = false; em.textContent = 'No HYPE at this address yet.'; }
+  else if (!hasT) { em.hidden = false; em.textContent = 'No HYPE spot trades in this address\'s recent fills. HYPE can also arrive by transfer.'; }
+  else em.hidden = true;
+  if (hasT) {
+    $('#r5').textContent = num(j.buys.sz, 2); $('#r5i').textContent = j.buys.n + (j.buys.n === 1 ? ' fill' : ' fills') + ' · ' + usd(j.buys.usd);
+    $('#r6').textContent = j.buys.avg ? usd(j.buys.avg, 3) : '0';
+    $('#r7').textContent = num(j.sells.sz, 2); $('#r7i').textContent = j.sells.n + (j.sells.n === 1 ? ' fill' : ' fills');
+    $('#rfills').innerHTML = j.fills.slice(0, 10).map((f) => `<li><span class="t">${ago(f.t)}</span><span class="s ${f.side === 'B' ? 'up' : 'dn'}">${f.side === 'B' ? '+' : '−'}${num(f.sz, 2)} HYPE <span style="color:var(--sub);font-weight:500">@ ${usd(f.px, 3)}</span></span><a href="https://hypurrscan.io/tx/${f.hash}" target="_blank" rel="noopener">tx ↗</a></li>`).join('');
+    if (j.buys.n) requestAnimationFrame(() => drawAcc(j.fills));
+  }
+}
+async function check(addr) {
+  addr = (addr || '').trim();
+  if (!/^0x[0-9a-fA-F]{40}$/.test(addr)) { cstat('That is not a Hyperliquid address (0x + 40 characters).', 'err'); return; }
+  $('#caddr').value = addr;
+  cstat('Reading Hyperliquid…');
+  try {
+    const j = await getTreasury(addr);
+    paintRes(j);
+    cstat('Live · ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), 'ok');
+    history.replaceState(null, '', '#t=' + j.addr);
+  } catch (e) { cstat(e.message, 'err'); }
+}
+$('#cform').addEventListener('submit', (e) => { e.preventDefault(); check($('#caddr').value); });
+$('#tries').addEventListener('click', (e) => { const b = e.target.closest('button[data-a]'); if (b) check(b.dataset.a); });
+const hm = location.hash.match(/^#t=(0x[0-9a-fA-F]{40})$/);
+if (hm) { check(hm[1]); setTimeout(() => $('#check').scrollIntoView(), 300); }
+
+/* ---------- 05: live chart ---------- */
+let K = [], IV = '1h';
+function drawChart() {
+  const cv = $('#cv'), d = Math.min(2, devicePixelRatio || 1), w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = w * d; cv.height = h * d; const c = cv.getContext('2d'); c.scale(d, d);
+  if (!K.length) return;
+  const n = Math.min(K.length, Math.max(30, Math.floor(w / 9))), k = K.slice(-n);
+  const pl = 14, pr = 70, pt = 86, pb = 26;
+  let lo = Math.min(...k.map((x) => x[3])), hi = Math.max(...k.map((x) => x[2])); const pad = (hi - lo) * .06 || 1; lo -= pad; hi += pad;
+  const Y = (v) => pt + (hi - v) / (hi - lo) * (h - pt - pb), step = (w - pl - pr) / k.length, bw = Math.max(1, step * .62);
+  c.font = '500 11px "Geist Mono", monospace'; c.textAlign = 'left';
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + (hi - lo) * i / 4, y = Y(v);
+    c.strokeStyle = 'rgba(110,245,205,.07)'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, y); c.lineTo(w - pr + 6, y); c.stroke();
+    c.fillStyle = '#628a7f'; c.fillText(v.toFixed(v < 100 ? 2 : 1), w - pr + 12, y + 4);
+  }
+  k.forEach((x, i) => {
+    const cx = pl + step * i + step / 2, up = x[4] >= x[1], col = up ? '#6ef5cd' : '#ff6b7f';
+    c.strokeStyle = col; c.fillStyle = col; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(cx, Y(x[2])); c.lineTo(cx, Y(x[3])); c.stroke();
+    const y1 = Y(Math.max(x[1], x[4])), y2 = Y(Math.min(x[1], x[4]));
+    c.fillRect(cx - bw / 2, y1, bw, Math.max(1, y2 - y1));
+  });
+  const last = k[k.length - 1][4], ly = Y(last);
+  c.setLineDash([4, 4]); c.strokeStyle = 'rgba(110,245,205,.6)'; c.beginPath(); c.moveTo(pl, ly); c.lineTo(w - pr + 6, ly); c.stroke(); c.setLineDash([]);
+  rr(c, w - pr + 6, ly - 11, pr - 10, 22, 6); c.fillStyle = '#6ef5cd'; c.fill(); c.fillStyle = '#03231b'; c.font = '600 11px "Geist Mono", monospace'; c.fillText(last.toFixed(last < 100 ? 3 : 2), w - pr + 12, ly + 4);
+  c.fillStyle = '#628a7f'; c.font = '500 11px "Geist Mono", monospace';
+  const fmtT = (t) => IV !== '15m' ? new Date(t).toLocaleDateString([], { month: 'short', day: 'numeric' }) : new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  c.textAlign = 'left'; c.fillText(fmtT(k[0][0]), pl, h - 8); c.textAlign = 'right'; c.fillText(fmtT(k[k.length - 1][0]), w - pr, h - 8);
+  const first = k[0][1], ch = (last / first - 1) * 100;
+  $('#clabel').innerHTML = `HYPE / USDC · Hyperliquid spot · ${IV}<b>${usd(last, last < 100 ? 3 : 2)} <span class="${ch >= 0 ? 'up' : 'dn'}" style="font:600 15px var(--mono)">${pct(ch)}</span></b>`;
+}
+async function loadChart() {
+  try {
+    const r = await fetch('/api/candles?i=' + IV, { cache: 'no-store' }); const j = await r.json();
+    if (!r.ok || !j.candles || !j.candles.length) throw 0;
+    K = j.candles; drawChart();
+  } catch (e) { if (!K.length) $('#clabel').innerHTML = 'Hyperliquid is not answering right now. <button type="button" style="color:var(--mint);font:inherit" onclick="this.parentNode.textContent=\'Connecting…\'">Retry ↻</button>'; }
+}
+$('#clabel').addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') loadChart(); });
+$('#ctabs').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; $$('#ctabs button').forEach((x) => x.classList.toggle('on', x === b)); IV = b.dataset.i; loadChart(); });
+loadChart(); setInterval(() => { if (!document.hidden) loadChart(); }, 60000);
+let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawChart(); if (lastRes && lastRes.buys.n) drawAcc(lastRes.fills); }, 150); });
+
+/* ---------- reveal + nav state ---------- */
+const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('vis'); io.unobserve(e.target); } }), { threshold: .12 });
+$$('.rv').forEach((el, i) => { el.style.transitionDelay = (i % 4) * 70 + 'ms'; io.observe(el); });
+const navA = $$('.links a');
+const so = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) navA.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === '#' + e.target.id)); }), { rootMargin: '-45% 0px -50% 0px' });
+$$('main section[id]').forEach((s) => so.observe(s));
+})();
+</script>
+</body>
+</html>
